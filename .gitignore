@@ -1,7 +1,7 @@
 # Logs
-logs
-*.log
-npm-debug.log*
+backend/logs
+backend/*.log
+backend/npm-debug.log*
 
 # Runtime data
 pids
@@ -25,4 +25,8 @@ build/Release
 
 # Dependency directory
 # https://docs.npmjs.com/misc/faq#should-i-check-my-node-modules-folder-into-git
-node_modules
+backend/node_modules
+
+
+backend/.vscode
+backend/certs
