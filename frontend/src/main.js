@@ -1,13 +1,21 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-//import App from './App.vue'
-import Login from './components/Login.vue'
-import Signin from './components/Signin.vue'
+import sha256 from 'js-sha256'
+
+var App = Vue.extend({})
+
+var router;
 
 $(document).ready(function () {
-  Materialize.toast("Ready to go !", 4000)
-
+  $.sha256 = sha256
+  
   Vue.use(VueRouter)
+
+  router = new VueRouter({
+    history: false,
+    hashbang: false,
+    root: '/'
+  })
 
   /* eslint-disable no-new */
   /*new Vue({
@@ -15,26 +23,30 @@ $(document).ready(function () {
     components: { Login }
   })*/
 
-  var Foo = Vue.extend({
-    template: '<p>This is foo!</p>'
-  })
-
-  var App = Vue.extend({})
-
-  var router = new VueRouter({
-    history: false,
-    hashbang: false,
-    root: '/'
-  })
-
-  console.log(Foo)
-
   router.map({
+    '/': {
+      component: require('./views/Home.vue'),
+      auth: true
+    },
     '/login': {
-      component: Login
+      component: require('./views/Login.vue'),
+      auth: false
     },
     '/signin': {
-      component: Signin
+      component: require('./views/Signin.vue'),
+      auth: false
+    },
+    '/settings': {
+      component: require('./views/Settings/Navbar.vue'),
+      auth: true
+    }
+  })
+  
+  router.beforeEach(function(transition) {
+    if(transition.to.auth) {
+      transition.redirect('/login')
+    } else {
+      transition.next()
     }
   })
 

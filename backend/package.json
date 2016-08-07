@@ -14,11 +14,13 @@
     "express": "^4.14.0",
     "jsonwebtoken": "^7.1.6",
     "mongoose": "^4.5.7",
+    "morgan": "^1.7.0",
     "mpromise": "^0.5.5",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.1",
     "passport-google": "^0.3.0",
     "passport-http": "^0.3.0",
+    "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
     "passport-twitter": "^1.0.4"
   }

@@ -21,8 +21,10 @@
   },
   "dependencies": {
     "jquery": "2.1.1",
+    "js-sha256": "^0.3.0",
     "materialize-css": "^0.97.7",
     "vue": "^1.0.0",
+    "vue-resource": "^0.9.3",
     "vue-router": "^0.7.13"
   },
   "devDependencies": {
