@@ -7,36 +7,39 @@ const bcrypt = require('bcryptjs')
 const User = require('./models/User.js')
 
 const jwtCert = {
-  key: fs.readFileSync('./certs/jwt.key', {encoding : 'utf8'}),
-  pub: fs.readFileSync('./certs/jwt.pub', {encoding : 'utf8'})
+  key: fs.readFileSync('./certs/jwt.key', { encoding: 'utf8' }),
+  pub: fs.readFileSync('./certs/jwt.pub', { encoding: 'utf8' })
 }
 
 passport.use(new BasicStrategy(
   (username, password, done) => {
-    User.findOne({ username: username }, (err, user) => {
+    username = username.toLowerCase()
+    User.findOne({ $or: [{ username: username }, { "email.mail": username }] }, (err, user) => {
       if (err) return done(err)
 
       if (!user) {
-        return done(null, false, 'Incorrect username or password')
-      } else if (!user.email.verified) {
-        return done(null, false, 'Unverified email address')
+        return done({ message: 'Incorrect username or password', error: 'invalidCredentials' }, false)
       } else {
         bcrypt.compare(password, user.password, (err, valid) => {
           if (err) return done(err)
-          console.log(valid)
-          if (valid) done(null, user)
-          else return done(null, false, 'Incorrect username or password')
+          if (valid) {
+            if (!user.email.verified) {
+              return done({ "message": 'Unverified email address', "error": 'unverifiedEmail' }, false)
+            } else {
+              done(null, user)
+            }
+          }
+          else return done({ message: 'Incorrect username or password', error: 'invalidCredentials' }, false)
         })
       }
     })
   })
-  )
+)
 
 passport.use(new BearerStrategy(
   (token, done) => {
-    console.log(token)
     jwt.verify(token, jwtCert.pub, { algorithms: ['RS256'] }, (err, decoded) => {
-      if (err) return done(err);
+      if (err) return done(err, false);
       if (decoded) {
         done(null, decoded)
       } else {
@@ -44,6 +47,6 @@ passport.use(new BearerStrategy(
       }
     })
   })
-  )
+)
 
 module.exports = passport

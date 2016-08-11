@@ -1,4 +1,5 @@
 <template>
+  <navbar></navbar>
   <div id="login" class="row">
     <form class="col offset-s4 s4 grey lighten-5 z-depth-3" id="loginForm" @submit="onSubmit">
 
@@ -11,7 +12,7 @@
       <div class="row" id="errorDisplay" style="display: none;">
         <div class="col s12 m12">
           <div class="card-panel red lighten-1">
-            <span class="white-text" id="errorMessage">Nom d'utilisateur ou mot de passe incorrect</span>
+            <span class="white-text" id="errorMessage"></span>
             <span class="white-text right unselectable" style="cursor: pointer;">x</span>
           </div>
         </div>
@@ -61,15 +62,17 @@
 </template>
 
 <script>
-  import {router} from '../main.js  '
+import Auth from '../services/auth'
+import Navbar from './Navbar.vue'
   export default {
+  components: { 'navbar' : Navbar },
   methods: {
     onSubmit(e) {
       e.preventDefault();
-      
+
       var data = {
         username: $('#username').val(),
-        password: $.sha256($('#password').val() + $('#username').val())
+        password: $.sha256($('#password').val().toString() + "_apphubcms")
       }
       
       var that = this;
@@ -82,13 +85,22 @@
         },
         url: 'https://localhost:3000/login',
         success: (e) => {
-          console.log(e)
-          that.$router.auth = true
-          that.$router.token = e.token
-          that.$router.go('/')
+          if(e.success) {
+            console.log(e)
+            Auth.login(e.token)
+            console.log(Auth)
+            that.$router.go({path: '/settings'})
+          } else if(e.error == 'unverifiedEmail') {
+            $("#errorDisplay").find("#errorMessage").html('Vous devez vérifier votre adresse mail avant de pouvoir vous connecter')
+            $("#errorDisplay").show()
+              .find('.unselectable').on('click', function() {
+                  $('#errorDisplay').hide();
+                });
+          }
         },
         error: function(e) {
           if(e.status == 401) {
+            $("#errorDisplay").find("#errorMessage").html('Nom d\'utilisateur ou mot de passe incorrect')
             $("#errorDisplay").show()
               .find('.unselectable').on('click', function() {
                   $('#errorDisplay').hide();

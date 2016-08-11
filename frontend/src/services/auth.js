@@ -1,30 +1,42 @@
-import {router} from '../main.js'
-
 export default {
+  user: {
+    authenticated: false
+  },
 
-    authenticated: false,
+  login(token) {
+    localStorage.setItem('token', token)
+    this.user.authenticated = true
+  },
 
-    login(context, creds, redirect) {
-        context.$http.post('https://localhost:3000', creds, (data) => {
-            localStorage.setItem('user', JSON.stringify(data))
+  logout() {
+    localStorage.removeItem('token')
+    this.authenticated = false
+  },
 
-            this.authenticated = true
-            context.$root.user = data
+  checkLocalStorage() {
+    var that = this
 
-            // Redirect to a specified route
-            if (redirect) {
-                router.go(redirect)
-            }
-
-        }).error((errors) => {
-            context.errors = errors;
-        })
-    },
-
-    // To log out
-    logout: function() {
-        localStorage.removeItem('user');
-        this.authenticated = false;
-        router.go('/login')
+    if (localStorage.getItem('token')) {
+      $.ajax({
+        url: 'https://localhost:3000/checkToken',
+        data: localStorage.getItem('token'),
+        type: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        success: function (e) {
+          console.log(e)
+          if (e) {
+            that.authenticated = true
+          } else {
+            localStorage.removeItem('token')
+            that.authenticated = false
+          }
+        },
+        error: function (e) {
+          console.log(e)
+        }
+      })
     }
+  }
 }

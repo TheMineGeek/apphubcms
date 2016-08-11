@@ -1,4 +1,5 @@
 <template>
+  <navbar></navbar>
   <div id="signin" class="row">
     <form class="col offset-s4 s4 grey lighten-5 z-depth-3" @submit="onSubmit" id="signupForm">
       <div class="row center">
@@ -57,19 +58,21 @@
 </template>
 
 <script>
+  import Navbar from './Navbar.vue'
   export default {
+    components: { 'navbar' : Navbar },
   methods: {
     onSubmit(e) {      
       e.preventDefault() 
       if($('#password').val() == $('#cpassword').val()) {
         if($('#email').val().match(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i)) {
-          var password = $.sha256($('#password').val() + $('#username').val())
+          var password = $.sha256($('#password').val() + "_apphubcms")
           var data = {
             username: $('#username').val(),
             password:password,
             email: $('#email').val()
           }
-          console.log(data.password)
+          
           var that = this;
           
           $.ajax({
@@ -94,19 +97,11 @@
                 $('#errorDisplay').find('.unselectable').on('click', function() {
                   $('#errorDisplay').hide();
                 });
-                /*if(e.errorType == 'username') {
-                  Materialize.toast('Nom d\'utilisateur déjà utilisé', 4000)
-                } else if(errorType == 'email') {
-                  Materialize.toast('Adresse mail déjà utilisée', 4000)
-                }*/
               } else {
                 $('#validDisplay').show();
                 setTimeout(function() {
                   that.$router.go({
-                    path: '/login',
-                    query: {
-                      test: 'test'
-                    }
+                    path: '/login'
                   })
                 }, 1);
                 $('#validDisplay').find('.unselectable').on('click', function() {

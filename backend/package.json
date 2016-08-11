@@ -4,7 +4,8 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./lib/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,7 +16,6 @@
     "jsonwebtoken": "^7.1.6",
     "mongoose": "^4.5.7",
     "morgan": "^1.7.0",
-    "mpromise": "^0.5.5",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.1",
     "passport-google": "^0.3.0",
